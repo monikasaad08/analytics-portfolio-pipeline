@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: "Final fact table with order details and value segmentation"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        quote: true
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Customer identifier"
+        quote: true
+        tests:
+          - not_null
+      - name: total_order_value
+        description: "Total value of the order"
+        tests:
+          - not_null
+      - name: order_value_segment
+        description: "Order categorized as High/Medium/Low value"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['High Value', 'Medium Value', 'Low Value']
