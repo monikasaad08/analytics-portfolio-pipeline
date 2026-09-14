@@ -3,6 +3,7 @@ version: 2
 models:
   - name: fct_orders
     description: "Final fact table with order details and value segmentation"
+
     columns:
       - name: order_id
         description: "Unique order identifier"
@@ -10,18 +11,43 @@ models:
         tests:
           - unique
           - not_null
+
       - name: customer_id
         description: "Customer identifier"
         quote: true
         tests:
           - not_null
+
       - name: total_order_value
         description: "Total value of the order"
         tests:
           - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100000  # No order should be over 100k
+      
+      - name: item_count
+        description: "Number of items in order"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+              max_value: 500  # Sanity check: max 500 items per order
+
       - name: order_value_segment
         description: "Order categorized as High/Medium/Low value"
         tests:
           - accepted_values:
               arguments:
                 values: ['High Value', 'Medium Value', 'Low Value']
+      
+      - name: order_status
+        description: "Status of the order"
+        quote: true
+        tests:
+          - not_null
+
+      - name: order_date
+        description: "Date order was placed"
+        tests:
+          - not_null
