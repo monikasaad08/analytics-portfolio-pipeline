@@ -25,7 +25,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          pip install dbt-snowflake dbt-utils python-dotenv
+          pip install dbt-snowflake python-dotenv
       
       - name: Run dbt Models and Tests
         env:
@@ -34,6 +34,7 @@ jobs:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
         working-directory: ecommerce_dbt
         run: |
+          dbt deps
           dbt run
           dbt test
       
