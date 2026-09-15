@@ -23,6 +23,27 @@ jobs:
         with:
           python-version: '3.12'
       
+      - name: Create .dbt directory
+        run: mkdir -p ~/.dbt
+      
+      - name: Create profiles.yml
+        run: |
+          cat > ~/.dbt/profiles.yml << 'EOF'
+          ecommerce_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: SYSADMIN
+                database: ANALYTICS_DB
+                schema: STAGING
+                threads: 1
+                client_session_keep_alive: False
+          EOF
+      
       - name: Install dependencies
         run: |
           pip install dbt-snowflake python-dotenv
