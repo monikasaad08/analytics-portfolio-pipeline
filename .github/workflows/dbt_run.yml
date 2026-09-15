@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install dbt-snowflake dbt-utils python-dotenv
       
-      - name: Run dbt
+      - name: Run dbt Models and Tests
         env:
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
