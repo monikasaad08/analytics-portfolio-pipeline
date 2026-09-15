@@ -1,0 +1,46 @@
+name: dbt Run & Test Pipeline
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC (9 PM Tuesday in NZ)
+    - cron: '0 9 * * 1'
+  
+  # Also run when you push code to main branch
+  push:
+    branches:
+      - main
+
+jobs:
+  dbt_run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      
+      - name: Install dependencies
+        run: |
+          pip install dbt-snowflake dbt-utils python-dotenv
+      
+      - name: Run dbt
+        env:
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+        working-directory: ecommerce_dbt
+        run: |
+          dbt run
+          dbt test
+      
+      - name: Notify if success
+        if: success()
+        run: echo "✅ Pipeline executed successfully!"
+      
+      - name: Notify if failed
+        if: failure()
+        run: echo "❌ Pipeline failed - check logs"
